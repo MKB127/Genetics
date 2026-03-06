@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Genetic Pedigree — Chapter 1: Introduction</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ─── RESET ─────────────────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --bg:       #f0f2f5;
+  --surface:  #ffffff;
+  --border:   rgba(0,0,0,.07);
+  --text:     #1a1f2e;
+  --muted:    rgba(26,31,46,.5);
+  --accent:   #3b82f6;
+  --sidebar:  #1a1f2e;
+  --mono:     'DM Mono', monospace;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── LAYOUT ─────────────────────────────────────────────────────────────── */
+.app { display:flex; min-height:100vh; }
+
+/* ─── SIDEBAR ────────────────────────────────────────────────────────────── */
+.sidebar {
+  width: 256px;
+  min-height: 100vh;
+  background: var(--sidebar);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top:0; left:0;
+  z-index: 200;
+}
+.sidebar-logo {
+  padding: 26px 22px 18px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.sidebar-logo .brand {
+  font-size: 13px; font-weight:600;
+  letter-spacing:.09em; color:#fff; text-transform:uppercase; display:block;
+}
+.sidebar-logo .sub {
+  font-size: 11px; color:rgba(255,255,255,.32);
+  margin-top:3px; letter-spacing:.04em; display:block;
+}
+.nav-section {
+  padding: 18px 14px 6px;
+  font-size: 10px; font-weight:600;
+  letter-spacing:.13em; color:rgba(255,255,255,.24);
+  text-transform: uppercase;
+}
+.nav-item {
+  display: flex; align-items:center; gap:9px;
+  padding: 9px 14px; margin: 1px 7px;
+  border-radius: 8px;
+  font-size: 13px; font-weight:400;
+  color: rgba(255,255,255,.52);
+  cursor: pointer;
+  transition: background .16s, color .16s;
+  user-select: none;
+}
+.nav-item:hover { background:rgba(255,255,255,.07); color:rgba(255,255,255,.82); }
+.nav-item.active { background:rgba(255,255,255,.11); color:#fff; font-weight:500; }
+.nav-icon { font-size:14px; opacity:.7; flex-shrink:0; }
+.nav-item.active .nav-icon { opacity:1; }
+.nav-badge {
+  margin-left:auto; font-size:9.5px;
+  background: var(--accent); color:#fff;
+  border-radius:10px; padding:2px 7px; font-weight:600;
+}
+.sidebar-footer {
+  margin-top: auto; padding:14px 16px;
+  border-top:1px solid rgba(255,255,255,.07);
+  font-size:11px; color:rgba(255,255,255,.22); line-height:1.5;
+}
+
+/* ─── MAIN ───────────────────────────────────────────────────────────────── */
+.main { margin-left:256px; flex:1; min-height:100vh; }
+
+/* ─── TOPBAR ─────────────────────────────────────────────────────────────── */
+.topbar {
+  background: rgba(240,242,245,.92);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  padding: 13px 38px;
+  display: flex; align-items:center; justify-content:space-between;
+  position: sticky; top:0; z-index:100;
+}
+.breadcrumb { font-size:12px; color:var(--muted); }
+.breadcrumb strong { color:var(--text); font-weight:500; }
+.breadcrumb .sep { margin:0 6px; opacity:.3; }
+.progress-pill {
+  display:flex; align-items:center; gap:7px;
+  background:#fff; border:1px solid var(--border);
+  border-radius:20px; padding:5px 13px;
+  font-size:11.5px; font-weight:500; color:var(--accent);
+}
+.progress-pill::before {
+  content:''; width:6px; height:6px;
+  border-radius:50%; background:#22c55e; flex-shrink:0;
+}
+
+/* ─── PAGE BODY ──────────────────────────────────────────────────────────── */
+.page-body { padding: 38px 38px 80px; max-width:1080px; }
+
+/* ─── HERO ───────────────────────────────────────────────────────────────── */
+.hero { margin-bottom:38px; animation: fadeUp .5s ease both; }
+.chapter-label {
+  font-size:11px; font-weight:600;
+  letter-spacing:.15em; text-transform:uppercase;
+  color:var(--accent); margin-bottom:10px;
+}
+.hero h1 {
+  font-size:34px; font-weight:300; line-height:1.15;
+  letter-spacing:-.025em; color:var(--text); margin-bottom:13px;
+}
+.hero h1 strong { font-weight:600; }
+.hero p {
+  font-size:14.5px; color:var(--muted);
+  line-height:1.7; max-width:600px; font-weight:300;
+}
+
+/* ─── SECTION DIVIDER ────────────────────────────────────────────────────── */
+.divider {
+  display:flex; align-items:center; gap:14px;
+  margin: 32px 0 20px;
+}
+.divider h2 { font-size:18px; font-weight:600; white-space:nowrap; }
+.divider-line { height:1px; background:var(--border); flex:1; }
+
+/* ─── CARD ───────────────────────────────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border-radius:15px;
+  border:1px solid var(--border);
+  overflow:hidden;
+  transition: box-shadow .2s, transform .2s;
+  animation: fadeUp .4s ease both;
+}
+.card:hover { box-shadow:0 8px 30px rgba(0,0,0,.08); transform:translateY(-2px); }
+.card.p { padding:26px; }
+
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:24px; }
+.grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:24px; }
+
+/* ─── PED OBJECT ─────────────────────────────────────────────────────────── */
+.card-title { font-size:14.5px; font-weight:600; margin-bottom:5px; }
+.card-sub { font-size:13px; color:var(--muted); line-height:1.55; margin-bottom:16px; }
+
+.vec-row {
+  display:flex; align-items:flex-start; gap:11px;
+  padding:9px 12px; border-radius:9px;
+  background:#f8f9fb; margin-bottom:7px;
+}
+.vec-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:6px; }
+.vec-code {
+  font-family:var(--mono); font-size:11.5px; font-weight:500;
+  padding:2px 7px; border-radius:5px; flex-shrink:0; margin-top:2px;
+}
+.vec-desc { font-size:13px; color:rgba(26,31,46,.65); line-height:1.5; }
+.vec-desc strong { color:var(--text); }
+code {
+  font-family:var(--mono); font-size:11px;
+  background:#f3f4f6; padding:1px 5px; border-radius:4px;
+}
+
+/* ─── NOTATION ───────────────────────────────────────────────────────────── */
+.notation-example {
+  display:flex; align-items:center; gap:4px;
+  margin-bottom:18px; flex-wrap:wrap;
+}
+.notation-piece { display:flex; flex-direction:column; align-items:center; gap:4px; }
+.n-id {
+  font-family:var(--mono); font-size:20px; font-weight:500;
+  padding:7px 13px; border-radius:9px; border:1.5px solid rgba(0,0,0,.08);
+  background:#f3f4f6; color:var(--text);
+}
+.n-id.gen { background:#dbeafe; color:#1d4ed8; border-color:#bfdbfe; }
+.n-id.num { background:#dcfce7; color:#166534; border-color:#bbf7d0; }
+.n-id.sep { background:transparent; border-color:transparent; color:#9ca3af; font-size:24px; padding:7px 2px; }
+.n-label { font-size:10px; color:rgba(26,31,46,.38); letter-spacing:.04em; }
+.n-caption { font-size:13px; color:var(--muted); margin-left:10px; align-self:center; }
+
+.n-table { width:100%; border-collapse:collapse; margin-top:4px; }
+.n-table th {
+  font-size:10px; font-weight:600; letter-spacing:.09em; text-transform:uppercase;
+  color:rgba(26,31,46,.38); padding:6px 10px; text-align:left;
+  border-bottom:1px solid var(--border);
+}
+.n-table td { font-size:13px; padding:9px 10px; border-bottom:1px solid rgba(0,0,0,.04); color:rgba(26,31,46,.68); }
+.n-table tr:last-child td { border-bottom:none; }
+.n-table td.mono { font-family:var(--mono); font-size:11.5px; font-weight:500; color:#1d4ed8; background:#eff6ff; border-radius:5px; width:64px; text-align:center; }
+
+/* ─── TITLE DEMO ─────────────────────────────────────────────────────────── */
+.ped-frame {
+  background:#f0f2f5; border-radius:11px; padding:14px 16px;
+  border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+}
+
+/* ─── BOXES ──────────────────────────────────────────────────────────────── */
+.info-box,.warn-box {
+  border-radius:10px; padding:13px 16px;
+  display:flex; gap:10px; align-items:flex-start; margin-top:8px;
+  font-size:13px; line-height:1.6;
+}
+.info-box { background:#eff6ff; border:1px solid #bfdbfe; color:#1d4ed8; }
+.warn-box { background:#fffbeb; border:1px solid #fde68a; color:#92400e; }
+.info-box strong,.warn-box strong { font-weight:600; }
+.box-icon { font-size:15px; flex-shrink:0; margin-top:1px; }
+
+/* ─── NOMENCLATURE BANNER ────────────────────────────────────────────────── */
+.nom-banner {
+  background: linear-gradient(130deg,#1e3a5f 0%,#1a1f2e 100%);
+  border-radius:15px; padding:24px 26px;
+  display:grid; grid-template-columns:repeat(3,1fr); gap:18px;
+  margin-bottom:24px;
+}
+.nom-col h4 {
+  font-size:10px; font-weight:600; letter-spacing:.12em;
+  text-transform:uppercase; color:rgba(255,255,255,.35);
+  margin-bottom:9px;
+}
+.nom-col p { font-size:13px; color:rgba(255,255,255,.7); line-height:1.6; }
+.nom-col p strong { color:#fff; }
+.nom-sep { width:1px; background:rgba(255,255,255,.08); }
+
+/* ─── LEGEND ─────────────────────────────────────────────────────────────── */
+.legend-grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:24px; }
+.legend-head {
+  font-size:10.5px; font-weight:600; letter-spacing:.10em;
+  text-transform:uppercase; color:rgba(26,31,46,.38);
+  padding-bottom:8px; margin-bottom:12px;
+  border-bottom:1.5px solid var(--accent); display:inline-block;
+}
+.legend-sub {
+  font-size:10px; font-weight:600; letter-spacing:.09em;
+  text-transform:uppercase; color:rgba(26,31,46,.28);
+  margin:13px 0 8px;
+}
+.legend-item {
+  display:flex; align-items:center; gap:12px;
+  padding:8px 10px; border-radius:9px;
+  background:#f8f9fb; margin-bottom:5px;
+  transition:background .14s;
+}
+.legend-item:hover { background:#f0f4ff; }
+.legend-sym {
+  width:34px; height:34px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+}
+.legend-text strong { display:block; font-size:13px; font-weight:500; }
+.legend-text span { font-size:11.5px; color:var(--muted); }
+.badge-dark {
+  font-family:var(--mono); font-size:9px; font-weight:600;
+  padding:3px 5px; border-radius:5px; color:#fff; background:#475569;
+  letter-spacing:.04em; white-space:nowrap;
+}
+
+/* ─── PHENOTYPES ─────────────────────────────────────────────────────────── */
+.pheno-card.p { padding:22px 26px; margin-bottom:24px; }
+.pheno-head {
+  font-size:10.5px; font-weight:600; letter-spacing:.10em;
+  text-transform:uppercase; color:rgba(26,31,46,.38);
+  padding-bottom:8px; margin-bottom:7px;
+  border-bottom:1.5px solid #7c3aed; display:inline-block;
+}
+.pheno-intro { font-size:13px; color:var(--muted); margin-bottom:16px; line-height:1.6; }
+.pheno-grid { display:grid; grid-template-columns:1fr 1fr; gap:13px; margin-bottom:13px; }
+.pheno-box {
+  background:#f8f9fb; border-radius:11px;
+  padding:14px; border:1.5px solid rgba(0,0,0,.05);
+}
+.pheno-box h4 { font-size:13px; font-weight:600; margin-bottom:7px; }
+.pheno-box p { font-size:12px; color:var(--muted); line-height:1.5; }
+.swatches { display:flex; gap:7px; margin-top:10px; flex-wrap:wrap; }
+.swatch {
+  width:32px; height:32px; border-radius:7px;
+  border:2px solid rgba(0,0,0,.12); position:relative; overflow:hidden;
+}
+.swatch.hatched::after {
+  content:''; position:absolute; inset:0;
+  background: repeating-linear-gradient(-45deg,transparent,transparent 3px,rgba(0,0,0,.22) 3px,rgba(0,0,0,.22) 4px);
+}
+.pheno-example {
+  display:flex; align-items:center; gap:11px;
+  background:#fff; border:1px solid var(--border);
+  border-radius:9px; padding:9px 12px; margin-top:7px;
+}
+.pheno-swatch-sm {
+  width:32px; height:32px; border-radius:7px; flex-shrink:0;
+  background:#ef4444; border:2px solid #3b9ef0;
+  position:relative; overflow:hidden;
+}
+.pheno-swatch-sm::after {
+  content:''; position:absolute; inset:0;
+  background: repeating-linear-gradient(-45deg,transparent,transparent 3px,rgba(0,0,0,.22) 3px,rgba(0,0,0,.22) 4px);
+}
+.pheno-ex-text strong { font-size:13px; font-weight:600; }
+.pheno-ex-text span { font-size:11px; color:var(--muted); }
+.pheno-actions { margin-left:auto; display:flex; gap:5px; }
+.pheno-btn {
+  font-size:11px; padding:4px 9px;
+  border-radius:6px; cursor:pointer; border:none; font-family:'DM Sans',sans-serif;
+}
+.pheno-btn.edit { background:#f3f4f6; border:1px solid var(--border); color:var(--muted); }
+.pheno-btn.del  { background:#fee2e2; border:1px solid #fecaca; color:#dc2626; }
+.create-btn {
+  display:block; width:100%;
+  background: linear-gradient(135deg,#3b82f6,#7c3aed);
+  color:#fff; border:none; border-radius:9px;
+  padding:11px; font-family:'DM Sans',sans-serif;
+  font-size:13px; font-weight:600; cursor:pointer;
+  text-align:center; margin-top:13px;
+  transition:opacity .16s;
+}
+.create-btn:hover { opacity:.88; }
+
+/* ─── DATA TABLE ─────────────────────────────────────────────────────────── */
+.table-wrap {
+  background:#f8f9fb; border-radius:12px;
+  border:1px solid var(--border); overflow:hidden;
+}
+.table-topbar {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 15px; border-bottom:1px solid var(--border);
+}
+.table-topbar span { font-size:11px; color:var(--muted); }
+.search-row { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--muted); }
+.search-input {
+  background:#fff; border:1px solid var(--border);
+  border-radius:6px; padding:3px 10px;
+  font-size:12px; color:rgba(26,31,46,.25);
+  min-width:110px; outline:none;
+}
+.ped-table { width:100%; border-collapse:collapse; }
+.ped-table th {
+  font-size:10.5px; font-weight:600; letter-spacing:.06em;
+  text-transform:uppercase; color:rgba(26,31,46,.38);
+  padding:9px 15px; text-align:left;
+  border-bottom:1px solid var(--border); background:#f8f9fb;
+  white-space:nowrap;
+}
+.sort { opacity:.28; margin-left:3px; font-size:9px; }
+.ped-table td {
+  font-size:13px; padding:10px 15px;
+  border-bottom:1px solid rgba(0,0,0,.04); color:rgba(26,31,46,.7);
+}
+.ped-table tr:last-child td { border-bottom:none; }
+.id-cell { font-family:var(--mono); font-size:12px; color:#1d4ed8; font-weight:500; }
+.dash { color:rgba(26,31,46,.2); }
+.alive-badge {
+  display:inline-block; background:#dcfce7; color:#16a34a;
+  border-radius:20px; padding:3px 11px; font-size:12px; font-weight:500;
+}
+.table-footer {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:9px 15px; border-top:1px solid var(--border);
+  font-size:12px; color:var(--muted);
+}
+.pager { display:flex; gap:4px; }
+.page-btn {
+  width:26px; height:26px; border-radius:6px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; font-weight:600;
+  border:1px solid var(--border); background:#fff;
+  color:var(--muted); cursor:pointer;
+}
+.page-btn.on { background:var(--accent); color:#fff; border-color:var(--accent); }
+
+/* ─── METHOD CARDS ───────────────────────────────────────────────────────── */
+.method-card {
+  cursor:pointer; text-align:center; padding:24px 18px;
+  transition: all .2s ease;
+}
+.method-card:hover { box-shadow:0 10px 34px rgba(0,0,0,.09); transform:translateY(-3px); }
+.method-card.on { border-color:var(--accent); box-shadow:0 0 0 3px rgba(59,130,246,.12); }
+.method-icon {
+  width:48px; height:48px; margin:0 auto 14px;
+  background:#f3f4f6; border-radius:13px;
+  display:flex; align-items:center; justify-content:center;
+  transition:background .2s;
+}
+.method-card:hover .method-icon, .method-card.on .method-icon { background:#dbeafe; }
+.method-icon svg { color:#6b7280; transition:color .2s; }
+.method-card:hover .method-icon svg, .method-card.on .method-icon svg { color:var(--accent); }
+.method-card h3 { font-size:11.5px; font-weight:600; letter-spacing:.09em; text-transform:uppercase; margin-bottom:3px; }
+.method-card p { font-size:12px; color:var(--muted); }
+
+/* ─── METHOD DETAIL ──────────────────────────────────────────────────────── */
+.method-detail { margin-bottom:24px; }
+.detail-header {
+  padding:20px 24px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; gap:12px;
+}
+.detail-icon {
+  width:40px; height:40px; border-radius:10px;
+  background:#eff6ff; display:flex; align-items:center;
+  justify-content:center; font-size:19px; flex-shrink:0;
+}
+.detail-header h3 { font-size:16px; font-weight:600; }
+.detail-header p { font-size:13px; color:var(--muted); margin-top:2px; }
+.detail-body {
+  padding:22px 24px;
+  display:grid; grid-template-columns:1fr 1fr; gap:22px;
+}
+.steps { display:flex; flex-direction:column; gap:11px; }
+.step { display:flex; gap:10px; align-items:flex-start; }
+.step-n {
+  width:22px; height:22px; border-radius:7px;
+  background:#eff6ff; color:var(--accent);
+  font-size:11px; font-weight:700;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; margin-top:2px;
+}
+.step p { font-size:13px; color:rgba(26,31,46,.68); line-height:1.55; }
+.step p strong { color:var(--text); }
+.method-note {
+  margin-top:8px; padding:10px 13px;
+  border-radius:9px; font-size:12.5px; line-height:1.5;
+}
+.method-note.green { background:#f0fdf4; border:1px solid #bbf7d0; color:#166534; }
+.method-note.amber { background:#fffbeb; border:1px solid #fde68a; color:#92400e; }
+.preview-area {
+  background:#f8f9fb; border-radius:11px;
+  display:flex; align-items:center; justify-content:center;
+  min-height:165px; padding:14px;
+}
+
+/* ─── NEXT BTN ───────────────────────────────────────────────────────────── */
+.next-wrap { display:flex; justify-content:flex-end; margin-top:32px; }
+.next-btn {
+  display:inline-flex; align-items:center; gap:8px;
+  background:var(--text); color:#fff; border:none;
+  border-radius:11px; padding:13px 24px;
+  font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500;
+  cursor:pointer; transition:background .16s, transform .16s;
+}
+.next-btn:hover { background:#2d3652; transform:translateX(3px); }
+.next-btn svg { transition:transform .16s; }
+.next-btn:hover svg { transform:translateX(3px); }
+
+/* ─── ANIMATIONS ─────────────────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(13px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.hero  { animation-delay:.00s; }
+.card:nth-child(1){ animation-delay:.05s; }
+.card:nth-child(2){ animation-delay:.10s; }
+.card:nth-child(3){ animation-delay:.15s; }
+.card:nth-child(4){ animation-delay:.20s; }
+.nom-banner { animation: fadeUp .45s ease .12s both; }
+.divider    { animation: fadeUp .4s  ease .05s both; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ── SIDEBAR ──────────────────────────────────────────────────────────── -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <span class="brand">Genetic Pedigree</span>
+      <span class="sub">Interactive Tutorial</span>
+    </div>
+
+    <div class="nav-section">Tutorial</div>
+    <div class="nav-item active"><span class="nav-icon">🏠</span> Introduction <span class="nav-badge">1</span></div>
+    <div class="nav-item"><span class="nav-icon">🌳</span> Pedigree Creation</div>
+    <div class="nav-item"><span class="nav-icon">🔀</span> Complex Structures</div>
+    <div class="nav-item"><span class="nav-icon">✏️</span> Modification</div>
+    <div class="nav-item"><span class="nav-icon">👥</span> Relationships</div>
+
+    <div class="nav-section">Analysis</div>
+    <div class="nav-item"><span class="nav-icon">🧬</span> Genetic Markers</div>
+    <div class="nav-item"><span class="nav-icon">📊</span> Visualization</div>
+    <div class="nav-item"><span class="nav-icon">📁</span> Import / Export</div>
+    <div class="nav-item"><span class="nav-icon">🌐</span> Genomic APIs</div>
+
+    <div class="sidebar-footer">Genetic Pedigree App v1.0<br>Educational &amp; Research Use</div>
+  </nav>
+
+  <!-- ── MAIN ─────────────────────────────────────────────────────────────── -->
+  <div class="main">
+
+    <!-- topbar -->
+    <div class="topbar">
+      <div class="breadcrumb">
+        Tutorial <span class="sep">›</span>
+        <strong>Introduction to Pedigrees</strong>
+      </div>
+      <div class="progress-pill">Section 1 of 8 — In progress</div>
+    </div>
+
+    <div class="page-body">
+
+      <!-- ── HERO ──────────────────────────────────────────────────────────── -->
+      <div class="hero">
+        <div class="chapter-label">Chapter 1</div>
+        <h1>Understanding <strong>Pedigrees</strong></h1>
+        <p>A pedigree is a standardised diagram representing family relationships across multiple
+           generations. This chapter covers the core concepts you need before working with the app.</p>
+      </div>
+
+      <!-- ── WHAT IS A PED ─────────────────────────────────────────────────── -->
+      <div class="divider"><h2>What is a Pedigree?</h2><div class="divider-line"></div></div>
+
+      <div class="grid-2">
+        <!-- ped object -->
+        <div class="card p">
+          <div class="card-title">The ped Object</div>
+          <div class="card-sub">Internally, a pedigree is encoded as 4 vectors of equal length — one entry per individual.</div>
+
+          <div class="vec-row">
+            <div class="vec-dot" style="background:#3b82f6"></div>
+            <span class="vec-code" style="background:#eff6ff;color:#1d4ed8">id</span>
+            <div class="vec-desc"><strong>Individual labels</strong> — unique identifiers for every person in the pedigree.</div>
+          </div>
+          <div class="vec-row">
+            <div class="vec-dot" style="background:#22c55e"></div>
+            <span class="vec-code" style="background:#f0fdf4;color:#15803d">fid</span>
+            <div class="vec-desc"><strong>Father ID</strong> — ID of the father, or <code>0</code> if unknown (founder).</div>
+          </div>
+          <div class="vec-row">
+            <div class="vec-dot" style="background:#f59e0b"></div>
+            <span class="vec-code" style="background:#fffbeb;color:#92400e">mid</span>
+            <div class="vec-desc"><strong>Mother ID</strong> — ID of the mother, or <code>0</code> if unknown (founder).</div>
+          </div>
+          <div class="vec-row">
+            <div class="vec-dot" style="background:#a855f7"></div>
+            <span class="vec-code" style="background:#faf5ff;color:#6b21a8">sex</span>
+            <div class="vec-desc"><strong>Sex code</strong> — <code>1</code> = male, <code>2</code> = female, <code>0</code> = unknown.</div>
+          </div>
+        </div>
+
+        <!-- diagram -->
+        <div class="card p" style="text-align:center">
+          <div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(26,31,46,.32);margin-bottom:16px">A Nuclear Family</div>
+          <div style="display:inline-block;background:#f8f9fb;border-radius:11px;padding:18px 28px">
+            <svg width="250" height="195" viewBox="0 0 250 195" style="overflow:visible">
+              <line x1="48" y1="44" x2="202" y2="44" stroke="#9ca3af" stroke-width="1.5"/>
+              <line x1="125" y1="44" x2="125" y2="96" stroke="#9ca3af" stroke-width="1.5"/>
+              <line x1="50" y1="96" x2="200" y2="96" stroke="#9ca3af" stroke-width="1.5"/>
+              <line x1="50" y1="96" x2="50" y2="142" stroke="#9ca3af" stroke-width="1.5"/>
+              <line x1="200" y1="96" x2="200" y2="142" stroke="#9ca3af" stroke-width="1.5"/>
+              <rect x="24" y="22" width="44" height="44" rx="4" fill="white" stroke="#374151" stroke-width="1.8"/>
+              <circle cx="202" cy="44" r="22" fill="white" stroke="#374151" stroke-width="1.8"/>
+              <rect x="28" y="142" width="44" height="44" rx="4" fill="white" stroke="#374151" stroke-width="1.8"/>
+              <circle cx="200" cy="164" r="22" fill="white" stroke="#374151" stroke-width="1.8"/>
+              <text x="46" y="78" text-anchor="middle" font-size="11" fill="#6b7280" font-family="DM Sans,sans-serif">I-1</text>
+              <text x="202" y="78" text-anchor="middle" font-size="11" fill="#6b7280" font-family="DM Sans,sans-serif">I-2</text>
+              <text x="50" y="198" text-anchor="middle" font-size="11" fill="#6b7280" font-family="DM Sans,sans-serif">II-1</text>
+              <text x="200" y="198" text-anchor="middle" font-size="11" fill="#6b7280" font-family="DM Sans,sans-serif">II-2</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── ID NOTATION & TITLE ────────────────────────────────────────────── -->
+      <div class="divider"><h2>ID Notation &amp; Pedigree Title</h2><div class="divider-line"></div></div>
+
+      <div class="grid-2">
+        <!-- notation -->
+        <div class="card p">
+          <div class="card-title">Standardised ID Notation</div>
+          <div class="card-sub">Each individual is identified by their <strong>generation</strong> (Roman numeral) followed by their <strong>position within that generation</strong> (Arabic numeral), separated by a hyphen.</div>
+
+          <div class="notation-example">
+            <div class="notation-piece"><div class="n-id gen">III</div><span class="n-label">Generation</span></div>
+            <div class="notation-piece"><div class="n-id sep">–</div><span class="n-label"></span></div>
+            <div class="notation-piece"><div class="n-id num">2</div><span class="n-label">Index</span></div>
+            <span class="n-caption">= 2nd individual in generation III</span>
+          </div>
+
+          <table class="n-table">
+            <thead><tr><th>ID</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">I-1</td>  <td>1st individual in Generation I (founders)</td></tr>
+              <tr><td class="mono">I-2</td>  <td>2nd individual in Generation I</td></tr>
+              <tr><td class="mono">II-1</td> <td>1st individual in Generation II (children)</td></tr>
+              <tr><td class="mono">III-3</td><td>3rd individual in Generation III (grandchildren)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- title + warn -->
+        <div>
+          <div class="card p" style="margin-bottom:14px">
+            <div class="card-title">Pedigree Title</div>
+            <div class="card-sub">Every pedigree has a <strong>title</strong> displayed above the diagram — the family name or case identifier. It is set when you create or load a pedigree.</div>
+            <div class="ped-frame">
+              <svg width="320" height="95" viewBox="0 0 320 95" style="overflow:visible">
+                <rect x="108" y="6" width="104" height="26" rx="4" fill="white" stroke="#60a5fa" stroke-width="1.8"/>
+                <text x="160" y="24" text-anchor="middle" font-size="12" font-weight="600" fill="#1d4ed8" font-family="DM Sans,sans-serif">My Family</text>
+                <line x1="60" y1="64" x2="260" y2="64" stroke="#9ca3af" stroke-width="1.5"/>
+                <rect x="36" y="50" width="28" height="28" rx="3" fill="white" stroke="#374151" stroke-width="1.6"/>
+                <circle cx="260" cy="64" r="14" fill="white" stroke="#374151" stroke-width="1.6"/>
+                <text x="50" y="90" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="DM Sans,sans-serif">I-1</text>
+                <text x="260" y="90" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="DM Sans,sans-serif">I-2</text>
+              </svg>
+            </div>
+          </div>
+          <div class="warn-box">
+            <span class="box-icon">✏️</span>
+            <p><strong>Custom IDs:</strong> While the app defaults to standard Roman/Arabic notation, you can assign any custom label to each individual. The app preserves your labels throughout the analysis.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── NOMENCLATURE BANNER ────────────────────────────────────────────── -->
+      <div class="nom-banner">
+        <div class="nom-col">
+          <h4>International Standard</h4>
+          <p><strong>PNPG / Bennett 2008</strong> guidelines define symbols, line types, and notation. Squares = males, circles = females, diamonds = unknown, horizontal lines = couples, vertical lines = children.</p>
+        </div>
+        <div class="nom-col">
+          <h4>What the App Implements</h4>
+          <p>The app follows these conventions as closely as technical limits allow: correct shapes, generation-indexed IDs, couple lines, descent lines, and all standard status markers.</p>
+        </div>
+        <div class="nom-col">
+          <h4>Custom Extensions</h4>
+          <p>The app extends the standard with <strong>custom phenotypes</strong> (fill colours, hatch patterns, motif symbols) and <strong>free-form individual labels</strong> for clinical or research use.</p>
+        </div>
+      </div>
+
+      <!-- ── SYMBOLS & LEGEND ───────────────────────────────────────────────── -->
+      <div class="divider"><h2>Symbols &amp; Legend</h2><div class="divider-line"></div></div>
+
+      <div class="legend-grid">
+        <!-- gender -->
+        <div class="card p">
+          <div class="legend-head">Gender</div>
+
+          <div class="legend-item">
+            <div class="legend-sym">
+              <svg width="28" height="28" viewBox="0 0 30 30"><rect x="3" y="3" width="24" height="24" rx="3" fill="white" stroke="#374151" stroke-width="2"/></svg>
+            </div>
+            <div class="legend-text"><strong>Male</strong><span>Square — sex code 1</span></div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-sym">
+              <svg width="28" height="28" viewBox="0 0 30 30"><circle cx="15" cy="15" r="12" fill="white" stroke="#374151" stroke-width="2"/></svg>
+            </div>
+            <div class="legend-text"><strong>Female</strong><span>Circle — sex code 2</span></div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-sym">
+              <svg width="28" height="28" viewBox="0 0 30 30"><polygon points="15,2 28,15 15,28 2,15" fill="white" stroke="#374151" stroke-width="2"/></svg>
+            </div>
+            <div class="legend-text"><strong>Undefined</strong><span>Diamond — sex code 0</span></div>
+          </div>
+
+          <div class="legend-sub">Assigned at birth</div>
+          <div class="legend-item">
+            <div class="legend-sym"><span class="badge-dark">AFAB</span></div>
+            <div class="legend-text"><strong>Assigned Female at Birth</strong><span>Annotation on symbol</span></div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-sym"><span class="badge-dark">AMAB</span></div>
+            <div class="legend-text"><strong>Assigned Male at Birth</strong><span>Annotation on symbol</span></div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-sym"><span class="badge-dark">UMAB</span></div>
+            <div class="legend-text"><strong>Undetermined at Birth</strong><span>Annotation on symbol</span></div>
+          </div>
+        </div>
+
+        <!-- status markers -->
+        <div class="card p">
+          <div class="legend-head">Status Markers</div>
+
+          <div class="legend-item">
+            <div class="legend-sym">
+              <svg width="28" height="28" viewBox="0 0 30 30">
+                <rect x="3" y="3" width="24" height="24" rx="3" fill="white" stroke="#374151" stroke-width="2"/>
+                <line x1="5" y1="25" x2="25" y2="5" stroke="#374151" stroke-width="1.8"/>
+              </svg>
+            </div>
+            <div class="legend-text"><strong>Deceased</strong><span>Diagonal slash through symbol</span></div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-sym">
+              <svg width="28" height="28" viewBox="0 0 30 30"><polygon points="15,4 27,26 3,26" fill="white" stroke="#374151" stroke-width="2"/></svg>
+            </div>
+            <div class="legend-text"><strong>Miscarriage / SAB</strong><span>Small triangle</span></div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-sym">
+              <svg width="28" height="28" viewBox="0 0 30 30">
+                <rect x="5" y="7" width="20" height="20" rx="2" fill="white" stroke="#374151" stroke-width="2"/>
+                <line x1="3" y1="7" x2="3" y2="27" stroke="#374151" stroke-width="2"/>
+                <line x1="27" y1="7" x2="27" y2="27" stroke="#374151" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="legend-text"><strong>Adopted</strong><span>Brackets around symbol</span></div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-sym">
+              <svg width="28" height="28" viewBox="0 0 30 30">
+                <rect x="5" y="5" width="20" height="20" rx="2" fill="white" stroke="#374151" stroke-width="2"/>
+                <line x1="25" y1="5" x2="30" y2="0" stroke="#374151" stroke-width="1.8"/>
+              </svg>
+            </div>
+            <div class="legend-text"><strong>Proband</strong><span>Arrow pointing to symbol</span></div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-sym">
+              <svg width="28" height="28" viewBox="0 0 30 30">
+                <rect x="5" y="5" width="20" height="20" rx="2" fill="white" stroke="#374151" stroke-width="2"/>
+                <line x1="5" y1="28" x2="25" y2="28" stroke="#374151" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="legend-text"><strong>Infertility</strong><span>Line beneath symbol</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PHENOTYPES ─────────────────────────────────────────────────────── -->
+      <div class="card pheno-card p">
+        <div class="pheno-head">Custom Phenotypes</div>
+        <p class="pheno-intro">Beyond standard symbols, the app lets you create <strong>custom phenotypes</strong> to visually tag any subset of individuals — affected status, carrier state, or any trait of interest. Two types are available:</p>
+
+        <div class="pheno-grid">
+          <div class="pheno-box">
+            <h4>🎨 Fill</h4>
+            <p>Colours the background of the individual's symbol. Can include a <strong>hatched pattern</strong> to indicate partial or carrier status.</p>
+            <div class="swatches">
+              <div class="swatch"         style="background:#ef4444;border-color:#1d4ed8"></div>
+              <div class="swatch hatched" style="background:#3b9ef0;border-color:#374151"></div>
+              <div class="swatch"         style="background:#22c55e;border-color:#374151"></div>
+              <div class="swatch hatched" style="background:#f59e0b;border-color:#7c3aed"></div>
+            </div>
+          </div>
+          <div class="pheno-box">
+            <h4>🔣 Motif</h4>
+            <p>Overlays a small <strong>symbol</strong> (half-circle, dot, cross…) at a chosen position. Useful when tracking multiple phenotypes simultaneously.</p>
+            <div class="swatches">
+              <svg width="32" height="32" viewBox="0 0 36 36"><rect x="2" y="2" width="32" height="32" rx="4" fill="white" stroke="#374151" stroke-width="1.8"/><path d="M18 8 A10 10 0 0 1 18 28 Z" fill="#f59e0b"/></svg>
+              <svg width="32" height="32" viewBox="0 0 36 36"><circle cx="18" cy="18" r="16" fill="white" stroke="#374151" stroke-width="1.8"/><circle cx="18" cy="18" r="7" fill="#3b82f6"/></svg>
+              <svg width="32" height="32" viewBox="0 0 36 36"><rect x="2" y="2" width="32" height="32" rx="4" fill="white" stroke="#374151" stroke-width="1.8"/><line x1="18" y1="8" x2="18" y2="28" stroke="#ef4444" stroke-width="2.5"/><line x1="8" y1="18" x2="28" y2="18" stroke="#ef4444" stroke-width="2.5"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="pheno-example">
+          <div class="pheno-swatch-sm"></div>
+          <div class="pheno-ex-text">
+            <strong>Example Phenotype</strong><br>
+            <span>Fill: orange-red · Hatched · Border: blue · 0 individuals assigned</span>
+          </div>
+          <div class="pheno-actions">
+            <button class="pheno-btn edit">✏️ Edit</button>
+            <button class="pheno-btn del">🗑</button>
+          </div>
+        </div>
+        <button class="create-btn">+ Create Phenotype</button>
+      </div>
+
+      <!-- ── DATA TABLE ─────────────────────────────────────────────────────── -->
+      <div class="divider"><h2>Pedigree Data Table</h2><div class="divider-line"></div></div>
+
+      <div class="card p">
+        <div class="card-title">Individual Summary Table</div>
+        <div class="card-sub">The app transcribes the full pedigree content into a sortable, searchable table. Each row is one individual. Columns can be populated progressively as you add clinical information.</div>
+
+        <div class="table-wrap">
+          <div class="table-topbar">
+            <span>Showing 1 to 3 of 3 individuals</span>
+            <div class="search-row"><strong>Search:</strong><input class="search-input" placeholder=" " /></div>
+          </div>
+          <table class="ped-table">
+            <thead>
+              <tr>
+                <th>Individual<span class="sort">⇅</span></th>
+                <th>Date of Birth<span class="sort">⇅</span></th>
+                <th>Date of Death<span class="sort">⇅</span></th>
+                <th>Age<span class="sort">⇅</span></th>
+                <th>f<span class="sort">⇅</span></th>
+                <th>Status</th>
+                <th>Phenotypes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="id-cell">I-1 ♂</td>
+                <td class="dash">—</td><td class="dash">—</td><td class="dash">—</td>
+                <td>0</td>
+                <td><span class="alive-badge">Alive</span></td>
+                <td class="dash">—</td>
+              </tr>
+              <tr>
+                <td class="id-cell">I-2 ♀</td>
+                <td class="dash">—</td><td class="dash">—</td><td class="dash">—</td>
+                <td>0</td>
+                <td><span class="alive-badge">Alive</span></td>
+                <td class="dash">—</td>
+              </tr>
+              <tr>
+                <td class="id-cell">II-1 ♀</td>
+                <td class="dash">—</td><td class="dash">—</td><td class="dash">—</td>
+                <td>0</td>
+                <td><span class="alive-badge">Alive</span></td>
+                <td class="dash">—</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="table-footer">
+            <span>Showing 1 to 3 of 3 individuals</span>
+            <div class="pager">
+              <div class="page-btn">‹</div>
+              <div class="page-btn on">1</div>
+              <div class="page-btn">›</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-box" style="margin-top:13px">
+          <span class="box-icon">💡</span>
+          <p><strong>Column 'f'</strong> is the inbreeding coefficient — automatically computed from the pedigree structure. It equals 0 for non-inbred individuals and increases towards 1 as the degree of inbreeding grows.</p>
+        </div>
+      </div>
+
+      <!-- ── HOW TO CREATE ──────────────────────────────────────────────────── -->
+      <div class="divider"><h2>Creating a Pedigree in This App</h2><div class="divider-line"></div></div>
+      <p style="font-size:13.5px;color:var(--muted);margin-bottom:18px;line-height:1.6">Three entry points are available from the home screen. Click any method below to learn more.</p>
+
+      <div class="grid-3" id="methodGrid">
+        <!-- SELECT -->
+        <div class="card method-card on" id="btn-select" onclick="setMethod('select')">
+          <div class="method-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+              <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+            </svg>
+          </div>
+          <h3>Select</h3><p>Templates &amp; Analysis</p>
+        </div>
+        <!-- RANDOM -->
+        <div class="card method-card" id="btn-random" onclick="setMethod('random')">
+          <div class="method-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="3"/>
+              <circle cx="8" cy="8" r="1.3" fill="currentColor"/>
+              <circle cx="16" cy="8" r="1.3" fill="currentColor"/>
+              <circle cx="8" cy="16" r="1.3" fill="currentColor"/>
+              <circle cx="16" cy="16" r="1.3" fill="currentColor"/>
+              <circle cx="12" cy="12" r="1.3" fill="currentColor"/>
+            </svg>
+          </div>
+          <h3>Random</h3><p>Generate</p>
+        </div>
+        <!-- LOAD -->
+        <div class="card method-card" id="btn-load" onclick="setMethod('load')">
+          <div class="method-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+              <line x1="12" y1="11" x2="12" y2="17"/><polyline points="9 14 12 17 15 14"/>
+            </svg>
+          </div>
+          <h3>Load</h3><p>From Files</p>
+        </div>
+      </div>
+
+      <!-- method detail panel -->
+      <div id="methodDetail"></div>
+
+      <!-- ── NEXT ───────────────────────────────────────────────────────────── -->
+      <div class="next-wrap">
+        <button class="next-btn">
+          Next: Pedigree Creation
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </button>
+      </div>
+
+    </div><!-- /page-body -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<script>
+const templates = {
+  select: {
+    icon: '🗂️',
+    title: 'Select from Templates',
+    desc:  'Browse a curated library of pre-built pedigree structures',
+    noteClass: 'green',
+    note: '✅ <strong>Best for:</strong> learning, exploring standard structures, or starting from a known template.',
+    steps: [
+      ['Click <strong>SELECT</strong> on the home screen to open the template browser.'],
+      ['Browse <strong>12+ templates</strong>: nuclear families, ancestral trees, half-sibling structures, inbred lines…'],
+      ['Optionally enter a <strong>family name</strong> — this becomes the pedigree title shown above the diagram.'],
+      ['Click <strong>Confirm</strong> to load the pedigree into the workspace.']
+    ],
+    preview: `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;width:100%">
+      ${[['Nuclear Trio','I-1 · I-2 · II-1'],['2 children','I-1 · I-2 · II-1 · II-2'],['5 children','I-1 · I-2 · II-1…'],
+         ['Ancestral 2G','2 generations back'],['Half-sibs pat.','Paternal half-sibs'],['12+ more','…']]
+        .map(([t,s])=>`<div style="background:#fff;border:1.5px solid rgba(0,0,0,.08);border-radius:8px;padding:9px 7px;text-align:center">
+          <p style="font-size:11px;font-weight:600;color:#374151;margin-bottom:3px">${t}</p>
+          <p style="font-size:9px;color:#9ca3af;font-family:'DM Mono',monospace">${s}</p>
+        </div>`).join('')}
+    </div>`
+  },
+  random: {
+    icon: '🎲',
+    title: 'Generate a Random Pedigree',
+    desc:  'Create unpredictable structures with a controlled family size range',
+    noteClass: 'green',
+    note: '✅ <strong>Best for:</strong> exploring edge cases, stress-testing, or generating varied examples.',
+    steps: [
+      ['Click <strong>RANDOM</strong> on the home screen.'],
+      ['Set the <strong>family size range</strong> with the two-handle slider (3–20 individuals).'],
+      ['Click <strong>Shuffle</strong> — the preview diagram updates instantly with a new random structure.'],
+      ['Optionally name the pedigree, then click <strong>Confirm</strong>.']
+    ],
+    preview: `<div style="background:#fff;border-radius:10px;padding:14px 18px;border:1px solid rgba(0,0,0,.06);width:100%">
+      <p style="font-size:10px;font-weight:600;letter-spacing:.10em;text-transform:uppercase;color:#9ca3af;margin-bottom:7px">Family Size</p>
+      <div style="position:relative;height:5px;background:#e5e7eb;border-radius:3px;margin-bottom:14px">
+        <div style="position:absolute;left:12%;right:38%;height:100%;background:#3b82f6;border-radius:3px"></div>
+        <div style="position:absolute;left:12%;top:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:#fff;border:2px solid #3b82f6;box-shadow:0 1px 4px rgba(0,0,0,.15)"></div>
+        <div style="position:absolute;left:62%;top:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:#fff;border:2px solid #3b82f6;box-shadow:0 1px 4px rgba(0,0,0,.15)"></div>
+      </div>
+      <svg width="100%" height="100" viewBox="0 0 240 100">
+        <rect x="92" y="4" width="17" height="17" rx="2" fill="white" stroke="#374151" stroke-width="1.4"/>
+        <circle cx="148" cy="12" r="9" fill="white" stroke="#374151" stroke-width="1.4"/>
+        <line x1="109" y1="12" x2="139" y2="12" stroke="#9ca3af" stroke-width="1.2"/>
+        <line x1="124" y1="12" x2="124" y2="36" stroke="#9ca3af" stroke-width="1.2"/>
+        <line x1="68" y1="36" x2="182" y2="36" stroke="#9ca3af" stroke-width="1.2"/>
+        <line x1="68" y1="36" x2="68" y2="56" stroke="#9ca3af" stroke-width="1.2"/>
+        <line x1="124" y1="36" x2="124" y2="56" stroke="#9ca3af" stroke-width="1.2"/>
+        <line x1="182" y1="36" x2="182" y2="56" stroke="#9ca3af" stroke-width="1.2"/>
+        <rect x="59" y="56" width="17" height="17" rx="2" fill="white" stroke="#374151" stroke-width="1.4"/>
+        <circle cx="124" cy="65" r="9" fill="white" stroke="#374151" stroke-width="1.4"/>
+        <rect x="173" y="56" width="17" height="17" rx="2" fill="white" stroke="#374151" stroke-width="1.4"/>
+        <text x="68" y="92" text-anchor="middle" font-size="8.5" fill="#9ca3af" font-family="DM Sans,sans-serif">II-1</text>
+        <text x="124" y="92" text-anchor="middle" font-size="8.5" fill="#9ca3af" font-family="DM Sans,sans-serif">II-2</text>
+        <text x="181" y="92" text-anchor="middle" font-size="8.5" fill="#9ca3af" font-family="DM Sans,sans-serif">II-3</text>
+      </svg>
+    </div>`
+  },
+  load: {
+    icon: '📂',
+    title: 'Load from Files',
+    desc:  'Import an existing pedigree from a local file on your computer',
+    noteClass: 'amber',
+    note: '⚠️ Use <code>0</code> for missing parent IDs. CSV files must include a header row.',
+    steps: [
+      ['Click <strong>LOAD</strong> on the home screen.'],
+      ['Select your file. Supported formats: <strong>.ped</strong>, <strong>.fam</strong> (PLINK), <strong>.csv</strong>, <strong>.rds</strong>.'],
+      ['The app <strong>auto-detects the format</strong> and validates the structure (vector lengths, sex codes, acyclic relationships).'],
+      ['Review the import summary and click <strong>Confirm</strong>.']
+    ],
+    preview: `<div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+      <div style="background:#fff;border:1.5px dashed #d1d5db;border-radius:13px;width:200px;padding:22px 14px;text-align:center">
+        <div style="font-size:30px;margin-bottom:7px">📂</div>
+        <p style="font-size:13px;font-weight:600;color:#1a1f2e">Drop file here</p>
+        <p style="font-size:11px;color:#9ca3af;margin-top:3px">.ped · .fam · .csv · .rds</p>
+      </div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:center">
+        ${['.ped','.fam','.csv','.rds'].map(e=>`<span style="background:#f3f4f6;border-radius:6px;padding:3px 8px;font-size:11px;font-family:'DM Mono',monospace;color:#374151">${e}</span>`).join('')}
+      </div>
+    </div>`
+  }
+};
+
+function setMethod(key) {
+  // update card active state
+  document.querySelectorAll('.method-card').forEach(c => c.classList.remove('on'));
+  document.getElementById('btn-' + key).classList.add('on');
+
+  const d = templates[key];
+  const stepsHtml = d.steps.map((s,i)=>`
+    <div class="step">
+      <div class="step-n">${i+1}</div>
+      <p>${s[0]}</p>
+    </div>`).join('');
+
+  document.getElementById('methodDetail').innerHTML = `
+    <div class="card method-detail">
+      <div class="detail-header">
+        <div class="detail-icon">${d.icon}</div>
+        <div>
+          <h3>${d.title}</h3>
+          <p>${d.desc}</p>
+        </div>
+      </div>
+      <div class="detail-body">
+        <div class="steps">
+          ${stepsHtml}
+          <div class="method-note ${d.noteClass}">${d.note}</div>
+        </div>
+        <div class="preview-area">${d.preview}</div>
+      </div>
+    </div>`;
+}
+
+// init
+setMethod('select');
+</script>
+</body>
+</html>
